@@ -8,4 +8,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "pages#home"
+
+  scope "/:username" do
+    resources :stories, param: :permalink do
+      resources :chapters do
+        resources :choices
+      end
+    end
+  end
 end

@@ -10,9 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_19_201644) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_19_210011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "chapters", force: :cascade do |t|
+    t.bigint "story_id", null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["story_id"], name: "index_chapters_on_story_id"
+  end
+
+  create_table "choices", force: :cascade do |t|
+    t.string "text", default: "", null: false
+    t.bigint "chapter_id", null: false
+    t.integer "next_chapter_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chapter_id"], name: "index_choices_on_chapter_id"
+  end
+
+  create_table "stories", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title", default: "", null: false
+    t.string "permalink", default: "", null: false
+    t.text "intro", default: "", null: false
+    t.string "genre", default: "", null: false
+    t.boolean "interactive", default: false, null: false
+    t.boolean "featured", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["genre"], name: "index_stories_on_genre"
+    t.index ["title"], name: "index_stories_on_title"
+    t.index ["user_id"], name: "index_stories_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "username", default: "", null: false
@@ -44,4 +76,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_19_201644) do
     t.index ["username"], name: "index_users_on_username"
   end
 
+  add_foreign_key "chapters", "stories"
+  add_foreign_key "choices", "chapters"
+  add_foreign_key "stories", "users"
 end
